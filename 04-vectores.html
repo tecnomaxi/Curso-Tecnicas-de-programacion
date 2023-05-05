@@ -55,8 +55,8 @@
                 <td colspan="5"><button id="btn-vaciar-vector">Vaciar Vector</button></td>
             </tr>
             <tr>
-                <td colspan="5"><button id="btn-cargar-vector">Suma de Valores</button></td>
-                <td colspan="5"><button id="btn-vaciar-vector">Producto de Valores</button></td>
+                <td colspan="5"><button id="btn-suma-vector">Suma de Valores</button></td>
+                <td colspan="5"><button id="btn-producto-vector">Producto de Valores</button></td>
             </tr>
             <tr>
                 <td colspan="5"><button id="btn-calcular-moda">Calcular Moda</button></td>
@@ -91,6 +91,10 @@
         const tableTbody = document.querySelector('#id-table-vector-numerico > tbody')
         const btnCargarVector = document.getElementById("btn-cargar-vector")
         const btnVaciarVector = document.getElementById("btn-vaciar-vector")
+        const result = document.getElementById('id-txt-respuesta')
+        const btnSumaVector = document.getElementById("btn-suma-vector")
+        const btnProductoVector = document.getElementById("btn-producto-vector")
+        const btnCalculaModa = document.getElementById("btn-calcular-moda")
 
         fnPresentarVector()
 
@@ -106,15 +110,96 @@
             fnPresentarVector()
         })
 
+        btnSumaVector.addEventListener('click', (event) => {
+            event.preventDefault()
+            result.value = fnSumaVector()
+        })
+
+        btnProductoVector.addEventListener('click', (event) => {
+            event.preventDefault()
+            result.value = fnProductoVector()
+        })
+
+        btnCalculaModa.addEventListener('click', (event) => {
+            event.preventDefault()
+            result.value = fnCalculaModa()
+        })
+
         function fnCargarVector() {
             for (let x = 0; x < TOPE; x++) {
                 const numero = Math.ceil(Math.random() * NUM_MAXIMO_RANDOM);
                 vector[x] = numero
             }
+            result.value = ''
         }
 
         function fnVaciarVector() {
             vector = []
+        }
+
+        function fnSumaVector() {
+            let suma = 0
+            for (let i = 0; i<= 9; i++) {
+                suma += vector[i]
+            }
+            return suma
+        }
+
+        function fnProductoVector() {
+            let produc = 1
+            for (let i = 0; i<= 9; i++) {
+                produc *= vector[i]
+            }
+            return produc
+        }
+
+        function fnCalculaModa() {
+            let moda = 0
+            let vectorRepite = []
+            let vectorValorRepite = []
+            let vectorOrdenado = vector
+            vectorOrdenado.sort( (a, b) => {
+                if (a==b) {
+                    return 0
+                }
+                if (a<b) {
+                    return -1
+                }
+                return 1
+            })
+            let valAnterior = vectorOrdenado[0]
+            let valActual = vectorOrdenado[0]
+            let repeticiones = 1
+            let c = 0
+            for (let i=1; i<=9; i++) {
+                valActual = vectorOrdenado[i]
+                if (valActual == valAnterior) {
+                    repeticiones++
+                    if (i==9) {
+                        vectorRepite[c] = repeticiones
+                        vectorValorRepite[c] = valActual
+                    }
+                } else {
+                    if (repeticiones > 1) {
+                        vectorRepite[c] = repeticiones
+                        vectorValorRepite[c] = valAnterior
+                        repeticiones = 1
+                        c++
+                    }
+                }
+                valAnterior = valActual
+            }
+            let maxVectorRepite = Math.max(...vectorRepite)
+            for (let p=vectorRepite.length-1; p>=0; p--) {
+                if (vectorRepite[p] === maxVectorRepite) {
+                    moda = vectorValorRepite[p]
+                    break
+                }
+            }
+            if (moda == 0) {
+                moda = "La moda no existe"
+            }
+            return moda
         }
 
         function fnPresentarVector() {
@@ -126,7 +211,7 @@
                     if (contador === 0) {
                         str = str + `<td>${x}</td>`
                     } else {
-                        str = str + `<td bgcolor="#00FF00">${vector[x] || '-'}</td>`
+                        str = str + `<td bgcolor="#00FF00">${vector[x] || '&nbsp'}</td>`
                     }
                 }
                 str = str + `</tr>`
