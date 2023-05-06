@@ -95,6 +95,8 @@
         const btnSumaVector = document.getElementById("btn-suma-vector")
         const btnProductoVector = document.getElementById("btn-producto-vector")
         const btnCalculaModa = document.getElementById("btn-calcular-moda")
+        const btnCalculaMedia = document.getElementById("btn-calcular-media")
+        const btnCalculaMediana = document.getElementById("btn-calcular-mediana")
 
         fnPresentarVector()
 
@@ -123,6 +125,17 @@
         btnCalculaModa.addEventListener('click', (event) => {
             event.preventDefault()
             result.value = fnCalculaModa()
+        })
+
+        btnCalculaMedia.addEventListener('click', (event) => {
+            event.preventDefault()
+            let sumaVector = fnSumaVector()
+            result.value = fnCalculaMedia(sumaVector)
+        })
+
+        btnCalculaMediana.addEventListener('click', (event) => {
+            event.preventDefault()
+            result.value = fnCalculaMediana()
         })
 
         function fnCargarVector() {
@@ -202,6 +215,35 @@
             return moda
         }
 
+        function fnCalculaMedia(suma) {
+            let media = 0
+            media = suma / vector.length
+            return media
+        }            
+
+        function fnCalculaMediana() {
+            let mediana = 0
+            let vectorOrdenado = vector
+            vectorOrdenado.sort( (a, b) => {
+                if (a==b) {
+                    return 0
+                }
+                if (a<b) {
+                    return -1
+                }
+                return 1
+            })
+            
+            if (vector.length % 2 == 0) {
+                let p = vector.length / 2
+                mediana = (vectorOrdenado[p - 1] + vectorOrdenado[p]) / 2
+            } else {
+                let p = vector.length / 2
+                mediana = vectorOrdenado[p]
+            }
+            return mediana
+        }
+        
         function fnPresentarVector() {
             let contador = 0
             let str = ''
