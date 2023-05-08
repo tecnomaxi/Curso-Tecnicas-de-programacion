@@ -124,7 +124,8 @@
 
         btnCalculaModa.addEventListener('click', (event) => {
             event.preventDefault()
-            result.value = fnCalculaModa()
+            let vectorOrdenado = fnOrdenaVector()
+            result.value = fnCalculaModa(vectorOrdenado)
         })
 
         btnCalculaMedia.addEventListener('click', (event) => {
@@ -135,7 +136,8 @@
 
         btnCalculaMediana.addEventListener('click', (event) => {
             event.preventDefault()
-            result.value = fnCalculaMediana()
+            let vectorOrdenado = fnOrdenaVector()
+            result.value = fnCalculaMediana(vectorOrdenado)
         })
 
         function fnCargarVector() {
@@ -166,12 +168,9 @@
             return produc
         }
 
-        function fnCalculaModa() {
-            let moda = 0
-            let vectorRepite = []
-            let vectorValorRepite = []
-            let vectorOrdenado = vector
-            vectorOrdenado.sort( (a, b) => {
+        function fnOrdenaVector() {
+            let vectorOrden = vector
+            vectorOrden.sort( (a, b) => {
                 if (a==b) {
                     return 0
                 }
@@ -180,12 +179,19 @@
                 }
                 return 1
             })
-            let valAnterior = vectorOrdenado[0]
-            let valActual = vectorOrdenado[0]
+            return vectorOrden
+        }
+
+        function fnCalculaModa(vOrdenado) {
+            let moda = 0
+            let vectorRepite = []
+            let vectorValorRepite = []
+            let valAnterior = vOrdenado[0]
+            let valActual = vOrdenado[0]
             let repeticiones = 1
             let c = 0
             for (let i=1; i<=9; i++) {
-                valActual = vectorOrdenado[i]
+                valActual = vOrdenado[i]
                 if (valActual == valAnterior) {
                     repeticiones++
                     if (i==9) {
@@ -221,25 +227,14 @@
             return media
         }            
 
-        function fnCalculaMediana() {
+        function fnCalculaMediana(vOrdenado) {
             let mediana = 0
-            let vectorOrdenado = vector
-            vectorOrdenado.sort( (a, b) => {
-                if (a==b) {
-                    return 0
-                }
-                if (a<b) {
-                    return -1
-                }
-                return 1
-            })
-            
             if (vector.length % 2 == 0) {
                 let p = vector.length / 2
-                mediana = (vectorOrdenado[p - 1] + vectorOrdenado[p]) / 2
+                mediana = (vOrdenado[p - 1] + vOrdenado[p]) / 2
             } else {
                 let p = vector.length / 2
-                mediana = vectorOrdenado[p]
+                mediana = vOrdenado[p]
             }
             return mediana
         }
