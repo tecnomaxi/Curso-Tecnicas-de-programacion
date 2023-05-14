@@ -16,11 +16,27 @@
 
 <body>
     <h4>Ejercicio con Vectores</h4>
-    <p></p>
+    <div>
+        Dimension del arreglo:
+        <select id="select-dimension-arreglo">
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+            <option value="25">25</option>
+            <option value="30">30</option>
+        </select>
+    </div>
+    <br>
     <table id="id-table-vector-numerico" border="1" cellspacing="1" cellpadding="1">
         <thead>
             <tr>
-                <td colspan="10">Vector numerico de 10 elementos</td>
+                <td colspan="10">Vector numerico de N elementos</td>
             </tr>
         </thead>
         <tbody>
@@ -55,7 +71,11 @@
                 <td colspan="5"><button id="btn-vaciar-vector">Vaciar Vector</button></td>
             </tr>
             <tr>
-                <td colspan="5"><button id="btn-suma-vector">Suma de Valores</button></td>
+                <td colspan="5"><button id="btn-valor-minimo">Valor Minimo</button></td>
+                <td colspan="5"><button id="btn-valor-maximo">Valor Maximo</button></td>
+            </tr>
+            <tr>
+                <td colspan="5"><button id="btn-sumar-valores">Suma de Valores</button></td>
                 <td colspan="5"><button id="btn-producto-vector">Producto de Valores</button></td>
             </tr>
             <tr>
@@ -64,12 +84,22 @@
             </tr>
             <tr>
                 <td colspan="5"><button id="btn-calcular-mediana">Calcular Mediana</button></td>
-                <td colspan="5"><button id="btn-calcular-otro">...</button></td>
+                <td colspan="5"> </td>
+            </tr>
+
+            <tr>
+                <td colspan="5"><button id="btn-ordenar-asc-seleccion">Ordenar ASC Método Selección</button></td>
+                <td colspan="5"><button id="btn-ordenar-desc-seleccion">Ordenar DESC Método Selección</button></td>
+            </tr>
+
+            <tr>
+                <td colspan="5"><button id="btn-ordenar-asc-burbuja">Ordenar ASC Método Burbuja</button></td>
+                <td colspan="5"><button id="btn-ordenar-desc-burbuja">Ordenar DESC Método Burbuja</button></td>
             </tr>
         </tfoot>
     </table>
     <hr>
-    <table>
+    <table id="tabla-resultado-operaciones" style="display: none;">
         <thead>
             <tr>
                 <td colspan="2">Calculos con vectores </td>
@@ -78,30 +108,76 @@
         <tbody>
             <tr>
                 <td>Resultado:</td>
-                <td colspan="2"><input type="text" id="id-txt-respuesta" readonly></td>
+                <td colspan="2"><input type="text" id="id-txt-respuesta"></td>
             </tr>
         </tbody>
     </table>
+    <table  id="tabla-vector-ordenado" border="1" cellspacing="1" cellpadding="1" style="display: none;">
+        <thead>
+            <tr>
+                <td colspan="10">ORDENAMIENTO DEL VECTOR NUMERICO</td>
+            </tr>
+            <tr>
+                <td colspan="10" id="descrip-orden-vector"></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+            </tr>
+        </tbody>
+    </table>    
 
     <script>
         let vector = []
-        const TOPE = 10
+        let vectorOrdenado = []
         const NUM_MAXIMO_RANDOM = 20
 
         const tableTbody = document.querySelector('#id-table-vector-numerico > tbody')
+        const tableTbodyOrden = document.querySelector('#tabla-vector-ordenado > tbody')
         const btnCargarVector = document.getElementById("btn-cargar-vector")
         const btnVaciarVector = document.getElementById("btn-vaciar-vector")
-        const result = document.getElementById('id-txt-respuesta')
-        const btnSumaVector = document.getElementById("btn-suma-vector")
-        const btnProductoVector = document.getElementById("btn-producto-vector")
-        const btnCalculaModa = document.getElementById("btn-calcular-moda")
-        const btnCalculaMedia = document.getElementById("btn-calcular-media")
-        const btnCalculaMediana = document.getElementById("btn-calcular-mediana")
+        const btnValorMinimo = document.getElementById("btn-valor-minimo")
+        const btnValorMaximo = document.getElementById("btn-valor-maximo")
+        const btnSumarValores = document.getElementById("btn-sumar-valores")
+        const btnProductoValores = document.getElementById("btn-producto-vector")
+        const btnCalcularModa = document.getElementById("btn-calcular-moda")
+        const btnCalcularMedia = document.getElementById("btn-calcular-media")
+        const btnCalcularMediana = document.getElementById("btn-calcular-mediana")
+        const txtRespuesta = document.getElementById("id-txt-respuesta")
+        const btnOrdenAscSeleccion = document.getElementById("btn-ordenar-asc-seleccion")
+        const btnOrdenDescSeleccion = document.getElementById("btn-ordenar-desc-seleccion")
+        const btnOrdenAscBurbuja = document.getElementById("btn-ordenar-asc-burbuja")
+        const btnOrdenDescBurbuja = document.getElementById("btn-ordenar-desc-burbuja")
 
-        fnPresentarVector()
+        const selectDimension = document.getElementById("select-dimension-arreglo")
+        let TOPE = parseInt(selectDimension.options[selectDimension.selectedIndex].value)
+
+        selectDimension.addEventListener('change', (event) => {
+            TOPE = parseInt(event.target.value)
+            //console.log(event.target.value); // 👉️ get selected VALUE
+
+            // 👇️ get selected VALUE even outside event handler
+            // console.log(selectDimension.options[selectDimension.selectedIndex].value);
+
+            // 👇️ get selected TEXT in or outside event handler
+            // console.log(selectDimension.options[selectDimension.selectedIndex].text);
+        })
 
         btnCargarVector.addEventListener('click', (event) => {
             event.preventDefault()
+            txtRespuesta.value = ""
+            document.getElementById("tabla-resultado-operaciones").style.display = "none"
+            document.getElementById("tabla-vector-ordenado").style.display = "none"
             fnCargarVector()
             fnPresentarVector()
         })
@@ -112,133 +188,130 @@
             fnPresentarVector()
         })
 
-        btnSumaVector.addEventListener('click', (event) => {
+        // Calcular Valor Minomo
+        btnValorMinimo.addEventListener('click', (event) => { 
             event.preventDefault()
-            result.value = fnSumaVector()
+            document.getElementById("tabla-resultado-operaciones").style.display = "block"
+            document.getElementById("tabla-vector-ordenado").style.display = "none"
+            let copiaVector = [...vector]
+            txtRespuesta.value = fnBuscarNumeroMenor(copiaVector)
         })
 
-        btnProductoVector.addEventListener('click', (event) => {
+        // Calcular Valor Máximo
+        btnValorMaximo.addEventListener('click', (event) => { 
             event.preventDefault()
-            result.value = fnProductoVector()
+            document.getElementById("tabla-resultado-operaciones").style.display = "block"
+            document.getElementById("tabla-vector-ordenado").style.display = "none"
+            let copiaVector = [...vector]
+            txtRespuesta.value = fnBuscarNumeroMayor(copiaVector)
         })
 
-        btnCalculaModa.addEventListener('click', (event) => {
+        //Calcular la Suma de Array de números
+        btnSumarValores.addEventListener('click', (event) => { 
             event.preventDefault()
-            let vectorOrdenado = fnOrdenaVector()
-            result.value = fnCalculaModa(vectorOrdenado)
+            document.getElementById("tabla-resultado-operaciones").style.display = "block"
+            document.getElementById("tabla-vector-ordenado").style.display = "none"
+            txtRespuesta.value = fnSumarValores()
         })
 
-        btnCalculaMedia.addEventListener('click', (event) => {
+        // Calcular el Producto de Array de números
+        btnProductoValores.addEventListener('click', (event) => { 
             event.preventDefault()
-            let sumaVector = fnSumaVector()
-            result.value = fnCalculaMedia(sumaVector)
+            document.getElementById("tabla-resultado-operaciones").style.display = "block"
+            document.getElementById("tabla-vector-ordenado").style.display = "none"
+            txtRespuesta.value = fnProductoVectores()
         })
 
-        btnCalculaMediana.addEventListener('click', (event) => {
+        // Calcular Moda del Array de números
+        btnCalcularModa.addEventListener('click', (event) => { 
             event.preventDefault()
-            let vectorOrdenado = fnOrdenaVector()
-            result.value = fnCalculaMediana(vectorOrdenado)
+            document.getElementById("tabla-resultado-operaciones").style.display = "block"
+            document.getElementById("tabla-vector-ordenado").style.display = "none"
+            let copiaVector = [...vector]
+            txtRespuesta.value = fnCalcularModa(copiaVector)
+        })
+        
+        // Calcular Media del un Array de numeros
+        btnCalcularMedia.addEventListener('click', (event) => { 
+            event.preventDefault()
+            document.getElementById("tabla-resultado-operaciones").style.display = "block"
+            document.getElementById("tabla-vector-ordenado").style.display = "none"
+            let suma = fnSumarValores()
+            let media = suma / TOPE
+            txtRespuesta.value = media.toFixed(2)
         })
 
+        // Calcular Mediana en un Array de numeros
+        btnCalcularMediana.addEventListener('click', (event) => {
+            event.preventDefault()
+            document.getElementById("tabla-resultado-operaciones").style.display = "block"
+            document.getElementById("tabla-vector-ordenado").style.display = "none"
+            let copiaVector = [...vector]
+            copiaVector.sort((a, b) => a - b)
+            console.log(copiaVector)
+            const dimensiones = copiaVector.length
+
+            if (dimensiones % 2 === 0) {
+                let posicionCentral = dimensiones / 2
+                txtRespuesta.value = (copiaVector[posicionCentral - 1] + copiaVector[posicionCentral]) / 2
+            } else {
+                let posicionCentral = parseInt((dimensiones - 1) / 2)
+                txtRespuesta.value = copiaVector[posicionCentral]
+            }
+
+        })
+
+        btnOrdenAscSeleccion.addEventListener('click', (event) => {
+            event.preventDefault()
+            document.getElementById("tabla-resultado-operaciones").style.display = "none"
+            document.getElementById("tabla-vector-ordenado").style.display = "block"
+            fnOrdenaVectorAscSeleccion()
+            fnPresentaVectorOrdenado()
+        })
+
+        btnOrdenDescSeleccion.addEventListener('click', (event) => {
+            event.preventDefault()
+            document.getElementById("tabla-resultado-operaciones").style.display = "none"
+            document.getElementById("tabla-vector-ordenado").style.display = "block"
+            fnOrdenaVectorDescSeleccion()
+            fnPresentaVectorOrdenado()
+        })
+        
+        btnOrdenAscBurbuja.addEventListener('click', (event) => {
+            event.preventDefault()
+            document.getElementById("tabla-resultado-operaciones").style.display = "none"
+            document.getElementById("tabla-vector-ordenado").style.display = "block"
+            fnOrdenaVectorAscBurbuja()
+            fnPresentaVectorOrdenado()
+        })
+        
+        btnOrdenDescBurbuja.addEventListener('click', (event) => {
+            event.preventDefault()
+            document.getElementById("tabla-resultado-operaciones").style.display = "none"
+            document.getElementById("tabla-vector-ordenado").style.display = "block"
+            fnOrdenaVectorDescBurbuja()
+            fnPresentaVectorOrdenado()
+        })
+
+        /////////////////////////////////////////////////////////////
+
+        // Cargar valores aleatorios al array
         function fnCargarVector() {
+            vector = []
+            vectorOrdenado = []
             for (let x = 0; x < TOPE; x++) {
                 const numero = Math.ceil(Math.random() * NUM_MAXIMO_RANDOM);
                 vector[x] = numero
-            }
-            result.value = ''
+                vectorOrdenado[x] = numero
+             }
         }
 
+        // Borrar los valores del array
         function fnVaciarVector() {
             vector = []
         }
 
-        function fnSumaVector() {
-            let suma = 0
-            for (let i = 0; i<= 9; i++) {
-                suma += vector[i]
-            }
-            return suma
-        }
-
-        function fnProductoVector() {
-            let produc = 1
-            for (let i = 0; i<= 9; i++) {
-                produc *= vector[i]
-            }
-            return produc
-        }
-
-        function fnOrdenaVector() {
-            let vectorOrden = vector
-            vectorOrden.sort( (a, b) => {
-                if (a==b) {
-                    return 0
-                }
-                if (a<b) {
-                    return -1
-                }
-                return 1
-            })
-            return vectorOrden
-        }
-
-        function fnCalculaModa(vOrdenado) {
-            let moda = 0
-            let vectorRepite = []
-            let vectorValorRepite = []
-            let valAnterior = vOrdenado[0]
-            let valActual = vOrdenado[0]
-            let repeticiones = 1
-            let c = 0
-            for (let i=1; i<=9; i++) {
-                valActual = vOrdenado[i]
-                if (valActual == valAnterior) {
-                    repeticiones++
-                    if (i==9) {
-                        vectorRepite[c] = repeticiones
-                        vectorValorRepite[c] = valActual
-                    }
-                } else {
-                    if (repeticiones > 1) {
-                        vectorRepite[c] = repeticiones
-                        vectorValorRepite[c] = valAnterior
-                        repeticiones = 1
-                        c++
-                    }
-                }
-                valAnterior = valActual
-            }
-            let maxVectorRepite = Math.max(...vectorRepite)
-            for (let p=vectorRepite.length-1; p>=0; p--) {
-                if (vectorRepite[p] === maxVectorRepite) {
-                    moda = vectorValorRepite[p]
-                    break
-                }
-            }
-            if (moda == 0) {
-                moda = "La moda no existe"
-            }
-            return moda
-        }
-
-        function fnCalculaMedia(suma) {
-            let media = 0
-            media = suma / vector.length
-            return media
-        }            
-
-        function fnCalculaMediana(vOrdenado) {
-            let mediana = 0
-            if (vector.length % 2 == 0) {
-                let p = vector.length / 2
-                mediana = (vOrdenado[p - 1] + vOrdenado[p]) / 2
-            } else {
-                let p = vector.length / 2
-                mediana = vOrdenado[p]
-            }
-            return mediana
-        }
-        
+        // Presentar el array en una fila
         function fnPresentarVector() {
             let contador = 0
             let str = ''
@@ -248,13 +321,182 @@
                     if (contador === 0) {
                         str = str + `<td>${x}</td>`
                     } else {
-                        str = str + `<td bgcolor="#00FF00">${vector[x] || '&nbsp'}</td>`
+                        str = str + `<td bgcolor="#00FF00">${vector[x] || '-'}</td>`
                     }
                 }
                 str = str + `</tr>`
                 contador++
             }
             tableTbody.innerHTML = str
+        }
+
+        // Presenta vector ordenado
+        function fnPresentaVectorOrdenado() {
+            let contador = 0
+            let str = ''
+            while (contador < 2) {
+                str = str + `<tr>`
+                for (let x = 0; x < vectorOrdenado.length; x++) {
+                    if (contador === 0) {
+                        str = str + `<td>${x}</td>`
+                    } else {
+                        str = str + `<td bgcolor="#00FFFF">${vectorOrdenado[x] || '-'}</td>`
+                    }
+                }
+                str = str + `</tr>`
+                contador++
+            }
+            tableTbodyOrden.innerHTML = str
+        }
+
+        // Retoernar la suma del array
+        function fnSumarValores() {
+            let suma = 0
+            for (let i = 0; i < TOPE; i++) {
+                suma = suma + vector[i]
+            }
+            return suma
+        }
+
+        // Retornar el producto del array
+        function fnProductoVectores() {
+            let producto = 1
+            for (let i = 0; i < TOPE; i++) {
+                producto = producto * vector[i]
+            }
+            return producto
+        }
+
+        // RETORNAR VALOR MAXIMO
+        function fnBuscarNumeroMayor(copiaVector) {
+            let numeroMayor = copiaVector[0]
+            for (let i = 1; i < copiaVector.length; i++) {
+                if (copiaVector[i] > numeroMayor) {
+                    numeroMayor = copiaVector[i]
+                }
+            }
+            return numeroMayor
+        }
+
+        // RETORNAR VALOR MINIMO
+        function fnBuscarNumeroMenor(copiaVector) {
+            let numeroMenor = copiaVector[0]
+            for (let i = 1; i < copiaVector.length; i++) {
+                if (copiaVector[i] < numeroMenor) {
+                    numeroMenor = copiaVector[i]
+                }
+            }
+            return numeroMenor
+        }
+
+        //////////////////////////////////////////////////////
+        //      Calcular Moda en un Array de números        //
+        //////////////////////////////////////////////////////
+        function fnCalcularModa(copiaVector) {
+            let frecuencias = []
+            for (let i in copiaVector) {
+                const numero = copiaVector[i]
+                frecuencias[i] = calcularFrecuencia(numero, copiaVector)
+            }
+            let max = Math.max(...frecuencias)
+            if (max > 1) {
+                const posicionModa = obtenerPosicionFrecuenciaMayor(frecuencias)
+                const moda = copiaVector[posicionModa]
+                return moda
+            } else {
+                return "No existe moda"
+            }
+        }
+
+                // Retornar a fnCalcularModa() el número de veces que un valor se repite en el array copiaVector
+                function calcularFrecuencia(numero, copiaVector) {
+                    let numVeces = 0
+                    for (let i in copiaVector) {
+                        if (copiaVector[i] === numero) {
+                            numVeces++
+                        }
+                    }
+                    return numVeces
+                }
+
+                // Retornar la posición del mayor valor en el array frecuencias
+                function obtenerPosicionFrecuenciaMayor(frecuencias) {
+                    let posMayor = 0
+                    let numMayor = frecuencias[0]
+                    for (let i in frecuencias) {
+                        if (frecuencias[i] > numMayor) {
+                            numMayor = frecuencias[i]
+                            posMayor = i
+                        }
+                    }
+                    return posMayor
+                }
+        ////////////////////////////////////////////////////////
+
+        function fnOrdenaVectorAscSeleccion() {
+            let nuevoVector = [...vector]
+            document.getElementById("descrip-orden-vector").innerHTML = "Ascendente, Método Selección"
+            for (let i = 0; i <= nuevoVector.length-2; i++) {
+                let valor = nuevoVector[i]
+                let x = i
+                for (let j = i + 1; j <= nuevoVector.length-1; j++) {
+                    if (valor > nuevoVector[j]) {
+                        valor = nuevoVector[j]
+                        x = j
+                    }
+                }
+                nuevoVector[x] = nuevoVector[i]
+                nuevoVector[i] = valor
+            }
+            vectorOrdenado = [...nuevoVector]
+        }  
+
+        function fnOrdenaVectorDescSeleccion() {
+            let nuevoVector = [...vector]
+            document.getElementById("descrip-orden-vector").innerHTML = "Descendente, Método Selección"
+            for (let i = 0; i <= nuevoVector.length-2; i++) {
+                let valor = nuevoVector[i]
+                let x = i
+                for (let j = i + 1; j <= nuevoVector.length-1; j++) {
+                    if (valor < nuevoVector[j]) {
+                        valor = nuevoVector[j]
+                        x = j
+                    }
+                }
+                nuevoVector[x] = nuevoVector[i]
+                nuevoVector[i] = valor
+            }
+            vectorOrdenado = [...nuevoVector]
+        }
+        
+        function fnOrdenaVectorAscBurbuja() {
+            let nuevoVector = [...vector]
+            document.getElementById("descrip-orden-vector").innerHTML = "Ascendente, Método Burbuja"
+            for (let i = 0; i <= nuevoVector.length-1; i++) {
+                for (let j = 0; j <= nuevoVector.length-1; j++) {
+                    if (nuevoVector[j] > nuevoVector[j+1]) {
+                        let pivot = nuevoVector[j]
+                        nuevoVector[j] = nuevoVector[j+1]
+                        nuevoVector[j+1] = pivot
+                    }
+                }
+            }
+            vectorOrdenado = [...nuevoVector]
+        }
+
+        function fnOrdenaVectorDescBurbuja() {
+            let nuevoVector = [...vector]
+            document.getElementById("descrip-orden-vector").innerHTML = "Descendente, Método Burbuja"
+            for (let i = 0; i <= nuevoVector.length-1; i++) {
+                for (let j = 0; j <= nuevoVector.length-1; j++) {
+                    if (nuevoVector[j] < nuevoVector[j+1]) {
+                        let pivot = nuevoVector[j]
+                        nuevoVector[j] = nuevoVector[j+1]
+                        nuevoVector[j+1] = pivot
+                    }
+                }
+            }
+            vectorOrdenado = [...nuevoVector]
         }
 
     </script>
