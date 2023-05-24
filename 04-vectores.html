@@ -10,7 +10,6 @@
         table td {
             text-align: center;
         }
-
     </style>
 </head>
 
@@ -84,7 +83,7 @@
             </tr>
             <tr>
                 <td colspan="5"><button id="btn-calcular-mediana">Calcular Mediana</button></td>
-                <td colspan="5"> </td>
+                <td colspan="5"><button id="btn-buscar" style="background-color: aqua;">Buscar Elemento</button></td>
             </tr>
 
             <tr>
@@ -136,11 +135,32 @@
             </tr>
         </tbody>
     </table>    
+    <table id="tabla-proceso-busqueda" style="display: none;">
+        <thead>
+            <tr>
+                <td colspan="2">Busqueda con vectores </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Dato a buscar:</td>
+                <td colspan="2"><input type="text" id="id-txt-datobuscar"></td>
+            </tr>
+            <tr>
+                <td colspan="2"><button id="btn-busqueda-binaria" style="background-color: chartreuse;">Busqueda Binaria</button></td>
+                <td colspan="2"><button id="btn-busqueda-secuencial" style="background-color: darkgoldenrod;">Busqueda Secuencial</button></td>
+            </tr>            
+            <tr>
+                <td>Posición:</td>
+                <td colspan="2"><input type="text" id="id-txt-posicion"></td>
+            </tr>
+        </tbody>
+    </table>    
 
     <script>
         let vector = []
         let vectorOrdenado = []
-        const NUM_MAXIMO_RANDOM = 20
+        const NUM_MAXIMO_RANDOM = 50
 
         const tableTbody = document.querySelector('#id-table-vector-numerico > tbody')
         const tableTbodyOrden = document.querySelector('#tabla-vector-ordenado > tbody')
@@ -158,7 +178,11 @@
         const btnOrdenDescSeleccion = document.getElementById("btn-ordenar-desc-seleccion")
         const btnOrdenAscBurbuja = document.getElementById("btn-ordenar-asc-burbuja")
         const btnOrdenDescBurbuja = document.getElementById("btn-ordenar-desc-burbuja")
-
+        const btnBusqueda = document.getElementById("btn-buscar")
+        const btnBusquedaBinaria = document.getElementById("btn-busqueda-binaria")
+        const btnBusquedaSecuencial = document.getElementById("btn-busqueda-secuencial")
+        const txtPosicion = document.getElementById("id-txt-posicion")
+        const txtDatoBuscar = document.getElementById("id-txt-datobuscar").value
         const selectDimension = document.getElementById("select-dimension-arreglo")
         let TOPE = parseInt(selectDimension.options[selectDimension.selectedIndex].value)
 
@@ -173,11 +197,16 @@
             // console.log(selectDimension.options[selectDimension.selectedIndex].text);
         })
 
+        //txtDatoBuscar.addEventListener('change', (event) => {
+        //    document.getElementById("id-txt-posicion").value = ""
+        //})
+
         btnCargarVector.addEventListener('click', (event) => {
             event.preventDefault()
             txtRespuesta.value = ""
             document.getElementById("tabla-resultado-operaciones").style.display = "none"
             document.getElementById("tabla-vector-ordenado").style.display = "none"
+            document.getElementById("tabla-proceso-busqueda").style.display = "none"
             fnCargarVector()
             fnPresentarVector()
         })
@@ -193,6 +222,7 @@
             event.preventDefault()
             document.getElementById("tabla-resultado-operaciones").style.display = "block"
             document.getElementById("tabla-vector-ordenado").style.display = "none"
+            document.getElementById("tabla-proceso-busqueda").style.display = "none"
             let copiaVector = [...vector]
             txtRespuesta.value = fnBuscarNumeroMenor(copiaVector)
         })
@@ -202,6 +232,7 @@
             event.preventDefault()
             document.getElementById("tabla-resultado-operaciones").style.display = "block"
             document.getElementById("tabla-vector-ordenado").style.display = "none"
+            document.getElementById("tabla-proceso-busqueda").style.display = "none"
             let copiaVector = [...vector]
             txtRespuesta.value = fnBuscarNumeroMayor(copiaVector)
         })
@@ -211,6 +242,7 @@
             event.preventDefault()
             document.getElementById("tabla-resultado-operaciones").style.display = "block"
             document.getElementById("tabla-vector-ordenado").style.display = "none"
+            document.getElementById("tabla-proceso-busqueda").style.display = "none"
             txtRespuesta.value = fnSumarValores()
         })
 
@@ -219,6 +251,7 @@
             event.preventDefault()
             document.getElementById("tabla-resultado-operaciones").style.display = "block"
             document.getElementById("tabla-vector-ordenado").style.display = "none"
+            document.getElementById("tabla-proceso-busqueda").style.display = "none"
             txtRespuesta.value = fnProductoVectores()
         })
 
@@ -227,6 +260,7 @@
             event.preventDefault()
             document.getElementById("tabla-resultado-operaciones").style.display = "block"
             document.getElementById("tabla-vector-ordenado").style.display = "none"
+            document.getElementById("tabla-proceso-busqueda").style.display = "none"
             let copiaVector = [...vector]
             txtRespuesta.value = fnCalcularModa(copiaVector)
         })
@@ -236,6 +270,7 @@
             event.preventDefault()
             document.getElementById("tabla-resultado-operaciones").style.display = "block"
             document.getElementById("tabla-vector-ordenado").style.display = "none"
+            document.getElementById("tabla-proceso-busqueda").style.display = "none"
             let suma = fnSumarValores()
             let media = suma / TOPE
             txtRespuesta.value = media.toFixed(2)
@@ -246,6 +281,7 @@
             event.preventDefault()
             document.getElementById("tabla-resultado-operaciones").style.display = "block"
             document.getElementById("tabla-vector-ordenado").style.display = "none"
+            document.getElementById("tabla-proceso-busqueda").style.display = "none"
             let copiaVector = [...vector]
             copiaVector.sort((a, b) => a - b)
             console.log(copiaVector)
@@ -265,6 +301,7 @@
             event.preventDefault()
             document.getElementById("tabla-resultado-operaciones").style.display = "none"
             document.getElementById("tabla-vector-ordenado").style.display = "block"
+            document.getElementById("tabla-proceso-busqueda").style.display = "none"
             fnOrdenaVectorAscSeleccion()
             fnPresentaVectorOrdenado()
         })
@@ -273,6 +310,7 @@
             event.preventDefault()
             document.getElementById("tabla-resultado-operaciones").style.display = "none"
             document.getElementById("tabla-vector-ordenado").style.display = "block"
+            document.getElementById("tabla-proceso-busqueda").style.display = "none"
             fnOrdenaVectorDescSeleccion()
             fnPresentaVectorOrdenado()
         })
@@ -281,6 +319,7 @@
             event.preventDefault()
             document.getElementById("tabla-resultado-operaciones").style.display = "none"
             document.getElementById("tabla-vector-ordenado").style.display = "block"
+            document.getElementById("tabla-proceso-busqueda").style.display = "none"
             fnOrdenaVectorAscBurbuja()
             fnPresentaVectorOrdenado()
         })
@@ -289,12 +328,49 @@
             event.preventDefault()
             document.getElementById("tabla-resultado-operaciones").style.display = "none"
             document.getElementById("tabla-vector-ordenado").style.display = "block"
+            document.getElementById("tabla-proceso-busqueda").style.display = "none"
             fnOrdenaVectorDescBurbuja()
             fnPresentaVectorOrdenado()
         })
 
+        btnBusqueda.addEventListener('click', (event) => {
+            event.preventDefault()
+            document.getElementById("tabla-resultado-operaciones").style.display = "none"
+            document.getElementById("tabla-vector-ordenado").style.display = "block"
+            fnOrdenaVectorAscSeleccion()
+            fnPresentaVectorOrdenado()
+            document.getElementById("tabla-proceso-busqueda").style.display = "block"
+            document.getElementById("id-txt-posicion").value = ""
+            document.getElementById("id-txt-datobuscar").value = ""
+        })
+
+        btnBusquedaBinaria.addEventListener('click', (event) => {
+            event.preventDefault()
+            const txtDatoBuscar = document.getElementById("id-txt-datobuscar").value
+            if (txtDatoBuscar != "") {
+                txtPosicion.value = fnBusquedaBinaria(txtDatoBuscar)
+            }
+            
+        })
+
         /////////////////////////////////////////////////////////////
 
+        function fnBusquedaBinaria(txtDatoBuscar) {
+            let largoVector = vectorOrdenado.length
+            let posicion = Math.floor((largoVector) / 2)
+            while (posicion > -1) {
+                if (vectorOrdenado[posicion] == txtDatoBuscar) {
+                    return posicion
+                    posicion = -1
+                } else if (txtDatoBuscar > vectorOrdenado[posicion]) {
+                    posicion = Math.floor((posicion + largoVector) / 2)
+                } else {
+                    largoVector = posicion
+                    posicion = Math.floor(largoVector / 2)
+                }
+            }
+        }
+        
         // Cargar valores aleatorios al array
         function fnCargarVector() {
             vector = []
@@ -398,14 +474,13 @@
                 const numero = copiaVector[i]
                 frecuencias[i] = calcularFrecuencia(numero, copiaVector)
             }
-            let max = Math.max(...frecuencias)
-            if (max > 1) {
-                const posicionModa = obtenerPosicionFrecuenciaMayor(frecuencias)
-                const moda = copiaVector[posicionModa]
-                return moda
+            const posicionModa = obtenerPosicionFrecuenciaMayor(frecuencias)
+            if (posicionModa == "") {
+                const moda = "La moda no existe"
             } else {
-                return "No existe moda"
+                const moda = copiaVector[posicionModa]
             }
+            return moda
         }
 
                 // Retornar a fnCalcularModa() el número de veces que un valor se repite en el array copiaVector
@@ -421,16 +496,19 @@
 
                 // Retornar la posición del mayor valor en el array frecuencias
                 function obtenerPosicionFrecuenciaMayor(frecuencias) {
-                    let posMayor = 0
-                    let numMayor = frecuencias[0]
-                    for (let i in frecuencias) {
-                        if (frecuencias[i] > numMayor) {
-                            numMayor = frecuencias[i]
-                            posMayor = i
-                        }
+                let posMayor = 0
+                let numMayor = frecuencias[0]
+                for (let i in frecuencias) {
+                    if (frecuencias[i] > numMayor) {
+                        numMayor = frecuencias[i]
+                        posMayor = i
                     }
-                    return posMayor
                 }
+                if (numMayor == 1) {
+                    posMayor = ""
+                }
+                return posMayor
+            }
         ////////////////////////////////////////////////////////
 
         function fnOrdenaVectorAscSeleccion() {
